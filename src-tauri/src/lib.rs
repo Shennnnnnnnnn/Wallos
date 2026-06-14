@@ -75,14 +75,46 @@ fn database_file(app: &AppHandle) -> Result<PathBuf, String> {
     Ok(data_dir.join("wallos.db"))
 }
 
+fn php_binary() -> PathBuf {
+    if let Ok(path) = std::env::var("WALLOS_PHP_BIN") {
+        let php = PathBuf::from(path);
+        if php.exists() {
+            return php;
+        }
+    }
+
+    for path in [
+        "/opt/homebrew/bin/php",
+        "/opt/homebrew/opt/php/bin/php",
+        "/usr/local/bin/php",
+        "/usr/local/opt/php/bin/php",
+        "/usr/bin/php",
+    ] {
+        let php = PathBuf::from(path);
+        if php.exists() {
+            return php;
+        }
+    }
+
+    PathBuf::from("php")
+}
+
 fn run_php_script(root: &Path, db_file: &Path, script: &str) -> Result<(), String> {
-    let status = Command::new("php")
+    let php = php_binary();
+    let status = Command::new(&php)
         .arg(script)
         .current_dir(root)
         .env("WALLOS_DESKTOP_APP", "1")
         .env("WALLOS_DB_FILE", db_file)
         .status()
-        .map_err(|error| format!("Unable to run php {}: {}", script, error))?;
+        .map_err(|error| {
+            format!(
+                "Unable to run {} {}: {}",
+                php.display(),
+                script,
+                error
+            )
+        })?;
 
     if status.success() {
         Ok(())
@@ -95,7 +127,8 @@ fn start_php_server(root: &Path, db_file: &Path) -> Result<Child, String> {
     run_php_script(root, db_file, "endpoints/cronjobs/createdatabase.php")?;
     run_php_script(root, db_file, "endpoints/db/migrate.php")?;
 
-    Command::new("php")
+    let php = php_binary();
+    Command::new(&php)
         .args(["-S", "127.0.0.1:8787", "-t"])
         .arg(root)
         .current_dir(root)
@@ -104,7 +137,13 @@ fn start_php_server(root: &Path, db_file: &Path) -> Result<Child, String> {
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()
-        .map_err(|error| format!("Unable to start Wallos PHP server: {}", error))
+        .map_err(|error| {
+            format!(
+                "Unable to start Wallos PHP server with {}: {}",
+                php.display(),
+                error
+            )
+        })
 }
 
 fn open_main_window(app: &AppHandle) -> Result<(), String> {

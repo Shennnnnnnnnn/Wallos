@@ -5,5 +5,8 @@
 .DS_Store
 .idea/
 .vscode/
+node_modules/
+src-tauri/gen/
+src-tauri/target/
 AGENTS.md
 .antigravitycli

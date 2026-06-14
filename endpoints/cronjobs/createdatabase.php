@@ -1,6 +1,11 @@
 <?php
 
-$databaseFile = __DIR__ . '/../../db/wallos.db';
+$databaseFile = getenv('WALLOS_DB_FILE') ?: __DIR__ . '/../../db/wallos.db';
+$databaseDir = dirname($databaseFile);
+
+if (!file_exists($databaseDir)) {
+    mkdir($databaseDir, 0777, true);
+}
 
 if (!file_exists($databaseFile)) {
     echo "Database does not exist. Creating it...\n";
@@ -250,7 +255,9 @@ if (!file_exists($databaseFile)) {
     # Added notify column to subscriptions table
 
     $result = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='notifications'");
-    if (!$result->fetchArray(SQLITE3_ASSOC)) {
+    $notificationsTable = $result->fetchArray(SQLITE3_ASSOC);
+    $result->finalize();
+    if (!$notificationsTable) {
         $db->exec('CREATE TABLE notifications (
             id INTEGER PRIMARY KEY,
             enabled BOOLEAN DEFAULT false,
@@ -273,6 +280,7 @@ if (!file_exists($databaseFile)) {
             break;
         }
     }
+    $result->finalize();
     if (!$notifyColumnExists) {
         $db->exec('ALTER TABLE subscriptions ADD COLUMN notify BOOLEAN DEFAULT false');
         echo "Column 'notify' added to table 'subscriptions'.\n";
@@ -281,5 +289,7 @@ if (!file_exists($databaseFile)) {
     }
 
 }
+
+$db->close();
 
 ?>

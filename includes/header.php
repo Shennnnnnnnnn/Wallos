@@ -75,7 +75,8 @@ function hex2rgb($hex)
   return "$r, $g, $b";
 }
 
-$mobileNavigation = $settings['mobile_nav'] ? "mobile-navigation" : "";
+$isDesktopApp = function_exists('wallos_is_desktop_app') && wallos_is_desktop_app();
+$mobileNavigation = !$isDesktopApp && $settings['mobile_nav'] ? "mobile-navigation" : "";
 
 ?>
 <!DOCTYPE html>
@@ -161,7 +162,70 @@ $mobileNavigation = $settings['mobile_nav'] ? "mobile-navigation" : "";
   </script>
 </head>
 
-<body class="<?= $theme ?> <?= $languages[$lang]['dir'] ?> <?= $mobileNavigation ?>">
+<body class="<?= $theme ?> <?= $languages[$lang]['dir'] ?> <?= $mobileNavigation ?> <?= $isDesktopApp ? 'desktop-app' : '' ?>">
+  <?php
+  // find out which page is being viewed
+  $page = basename($_SERVER['PHP_SELF']);
+  $dashboardClass = $page === 'index.php' ? 'active' : '';
+  $subscriptionsClass = $page === 'subscriptions.php' ? 'active' : '';
+  $calendarClass = $page === 'calendar.php' ? 'active' : '';
+  $statsClass = $page === 'stats.php' ? 'active' : '';
+  $settingsClass = $page === 'settings.php' ? 'active' : '';
+  $profileClass = $page === 'profile.php' ? 'active' : '';
+  $adminClass = $page === 'admin.php' ? 'active' : '';
+  $aboutClass = $page === 'about.php' ? 'active' : '';
+  ?>
+
+  <?php if ($isDesktopApp): ?>
+    <div class="desktop-app-shell">
+      <aside class="desktop-sidebar">
+        <a class="desktop-sidebar-brand" href=".">
+          <span class="desktop-sidebar-logo">
+            <?php include "images/siteicons/svg/logo.php"; ?>
+          </span>
+        </a>
+        <nav class="desktop-sidebar-nav" aria-label="Primary">
+          <a href="." class="desktop-sidebar-link <?= $dashboardClass ?>" title="<?= translate('dashboard', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/home.php"; ?>
+            <span><?= translate('dashboard', $i18n) ?></span>
+          </a>
+          <a href="subscriptions.php" class="desktop-sidebar-link <?= $subscriptionsClass ?>" title="<?= translate('subscriptions', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/subscriptions.php"; ?>
+            <span><?= translate('subscriptions', $i18n) ?></span>
+          </a>
+          <a href="calendar.php" class="desktop-sidebar-link <?= $calendarClass ?>" title="<?= translate('calendar', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/calendar.php"; ?>
+            <span><?= translate('calendar', $i18n) ?></span>
+          </a>
+          <a href="stats.php" class="desktop-sidebar-link <?= $statsClass ?>" title="<?= translate('stats', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/statistics.php"; ?>
+            <span><?= translate('stats', $i18n) ?></span>
+          </a>
+          <a href="settings.php" class="desktop-sidebar-link <?= $settingsClass ?>" title="<?= translate('settings', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/settings.php"; ?>
+            <span><?= translate('settings', $i18n) ?></span>
+          </a>
+        </nav>
+        <nav class="desktop-sidebar-secondary" aria-label="Secondary">
+          <a href="profile.php" class="desktop-sidebar-link <?= $profileClass ?>" title="<?= translate('profile', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/profile.php"; ?>
+            <span><?= translate('profile', $i18n) ?></span>
+          </a>
+          <?php if ($isAdmin): ?>
+            <a href="admin.php" class="desktop-sidebar-link <?= $adminClass ?>" title="<?= translate('admin', $i18n) ?>">
+              <?php include "images/siteicons/svg/mobile-menu/admin.php"; ?>
+              <span><?= translate('admin', $i18n) ?></span>
+            </a>
+          <?php endif; ?>
+          <a href="about.php" class="desktop-sidebar-link <?= $aboutClass ?>" title="<?= translate('about', $i18n) ?>">
+            <?php include "images/siteicons/svg/mobile-menu/about.php"; ?>
+            <span><?= translate('about', $i18n) ?></span>
+          </a>
+        </nav>
+      </aside>
+      <div class="desktop-main-pane">
+  <?php endif; ?>
+
   <header>
     <div class="contain">
       <div class="logo">
@@ -207,7 +271,7 @@ $mobileNavigation = $settings['mobile_nav'] ? "mobile-navigation" : "";
               <?= translate('about', $i18n) ?>
             </a>
             <?php
-            if ($settings['disableLogin'] == 0) {
+            if (!$isDesktopApp && $settings['disableLogin'] == 0) {
               ?>
               <a href="logout.php">
                 <?php include "images/siteicons/svg/mobile-menu/logout.php"; ?>
@@ -222,18 +286,7 @@ $mobileNavigation = $settings['mobile_nav'] ? "mobile-navigation" : "";
   </header>
 
   <?php
-  // find out which page is being viewed
-  $page = basename($_SERVER['PHP_SELF']);
-  $dashboardClass = $page === 'index.php' ? 'active' : '';
-  $subscriptionsClass = $page === 'subscriptions.php' ? 'active' : '';
-  $calendarClass = $page === 'calendar.php' ? 'active' : '';
-  $statsClass = $page === 'stats.php' ? 'active' : '';
-  $settingsClass = $page === 'settings.php' ? 'active' : '';
-  $profileClass = $page === 'profile.php' ? 'active' : '';
-  ?>
-
-  <?php
-  if ($settings['mobile_nav'] == 1) {
+  if (!$isDesktopApp && $settings['mobile_nav'] == 1) {
     ?>
     <nav class="mobile-nav">
         <a href="." class="nav-link <?= $dashboardClass ?>" title="<?= translate('dashboard', $i18n) ?>">

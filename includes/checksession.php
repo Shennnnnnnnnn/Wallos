@@ -10,6 +10,28 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/desktop.php';
+
+if (wallos_is_desktop_app()) {
+    $userData = wallos_ensure_desktop_admin($db);
+    if ($userData === null) {
+        $db->close();
+        die('Unable to initialize the local desktop profile.');
+    }
+
+    $username = $userData['username'];
+    $main_currency = $userData['main_currency'];
+    $userId = $userData['id'];
+
+    $_SESSION['username'] = $username;
+    $_SESSION['loggedin'] = true;
+    $_SESSION['main_currency'] = $main_currency;
+    $_SESSION['userId'] = $userId;
+    $userCount = max($userCount, 1);
+
+    return;
+}
+
 if (isset($_GET['code']) && isset($_GET['state'])) {
     // This request is coming from the OIDC login flow
     $code = $_GET['code'];

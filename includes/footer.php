@@ -1,5 +1,10 @@
 </main>
 
+<?php if (isset($isDesktopApp) && $isDesktopApp): ?>
+  </div>
+</div>
+<?php endif; ?>
+
 <div class="toast" id="errorToast">
   <div class="toast-content">
     <i class="fas fa-solid fa-x toast-icon error"></i>

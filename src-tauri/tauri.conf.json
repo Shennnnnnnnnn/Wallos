@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Wallos",
+  "version": "0.1.0",
+  "identifier": "app.wallos.desktop",
+  "build": {
+    "devUrl": "http://127.0.0.1:8787",
+    "frontendDist": "../desktop-shell"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app"],
+    "resources": {
+      "../api": "wallos/api",
+      "../db": "wallos/db",
+      "../endpoints": "wallos/endpoints",
+      "../images": "wallos/images",
+      "../includes": "wallos/includes",
+      "../libs": "wallos/libs",
+      "../migrations": "wallos/migrations",
+      "../scripts": "wallos/scripts",
+      "../styles": "wallos/styles",
+      "../webfonts": "wallos/webfonts",
+      "../about.php": "wallos/about.php",
+      "../admin.php": "wallos/admin.php",
+      "../calendar.php": "wallos/calendar.php",
+      "../health.php": "wallos/health.php",
+      "../index.php": "wallos/index.php",
+      "../login.php": "wallos/login.php",
+      "../logos.php": "wallos/logos.php",
+      "../logout.php": "wallos/logout.php",
+      "../manifest.json": "wallos/manifest.json",
+      "../passwordreset.php": "wallos/passwordreset.php",
+      "../profile.php": "wallos/profile.php",
+      "../registration.php": "wallos/registration.php",
+      "../robots.txt": "wallos/robots.txt",
+      "../service-worker.js": "wallos/service-worker.js",
+      "../settings.php": "wallos/settings.php",
+      "../stats.php": "wallos/stats.php",
+      "../subscriptions.php": "wallos/subscriptions.php",
+      "../totp.php": "wallos/totp.php",
+      "../verifyemail.php": "wallos/verifyemail.php"
+    },
+    "icon": [
+      "icons/icon.png"
+    ]
+  }
+}

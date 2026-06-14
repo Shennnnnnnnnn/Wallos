@@ -39,7 +39,7 @@ function wallos_ensure_desktop_admin($db)
     if ($user === false) {
         $stmt = $db->prepare(
             "INSERT INTO user (id, username, firstname, lastname, email, password, main_currency, avatar, language, budget, api_key)
-             VALUES (1, 'desktop', 'Desktop', 'User', 'desktop@wallos.local', :password, 2, 'images/avatars/0.svg', 'en', 0, :api_key)"
+             VALUES (1, 'desktop', 'Desktop', 'User', 'desktop@wallos.local', :password, 2, 'images/avatars/0.svg', 'zh_cn', 0, :api_key)"
         );
         $stmt->bindValue(':password', password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT), SQLITE3_TEXT);
         $stmt->bindValue(':api_key', bin2hex(random_bytes(32)), SQLITE3_TEXT);
@@ -50,6 +50,11 @@ function wallos_ensure_desktop_admin($db)
 
     if ($user === false) {
         return null;
+    }
+
+    if (($user['language'] ?? '') !== 'zh_cn') {
+        $db->exec("UPDATE user SET language = 'zh_cn' WHERE id = 1");
+        $user['language'] = 'zh_cn';
     }
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM household WHERE user_id = 1");

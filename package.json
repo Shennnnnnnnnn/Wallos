@@ -4,10 +4,15 @@
   "version": "0.1.0",
   "scripts": {
     "desktop:serve": "WALLOS_DESKTOP_APP=1 php scripts/desktop-server.php",
+    "mcp:server": "node scripts/mcp-server.mjs",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
   }
 }

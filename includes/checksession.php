@@ -27,6 +27,11 @@ if (wallos_is_desktop_app()) {
     $_SESSION['loggedin'] = true;
     $_SESSION['main_currency'] = $main_currency;
     $_SESSION['userId'] = $userId;
+    setcookie('language', 'zh_cn', [
+        'expires' => time() + $secondsInMonth,
+        'samesite' => 'Lax'
+    ]);
+    $_COOKIE['language'] = 'zh_cn';
     $userCount = max($userCount, 1);
 
     return;
